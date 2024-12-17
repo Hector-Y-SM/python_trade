@@ -9,6 +9,7 @@ class User(Buy, Add, Delete):
         self.number = number
         self.pay = 0
         self.cart = []
+        self._role = 'user'
     
 
     def buy_product(self):
@@ -54,3 +55,11 @@ class User(Buy, Add, Delete):
         else:
             print(f'producto con ID {product_id} \nno encontrado en el carrito.')
         return self.cart
+    
+    @property
+    def role(self):
+        return self._role
+    
+    @role.setter
+    def role(self, newRole):
+        self._role = newRole

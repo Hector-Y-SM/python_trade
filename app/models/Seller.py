@@ -9,6 +9,7 @@ class Seller(Add, Delete, Archive):
         self.available = []
         self.archive = []
         self.all_products = []
+        self._role = 'seller'
 
     def __str__(self):
         return f"""
@@ -47,3 +48,11 @@ class Seller(Add, Delete, Archive):
                 return
             
             print('no existe esto')
+
+    @property
+    def role(self):
+        return self._role
+    
+    @role.setter
+    def role(self, newRole):
+        self._role = newRole
