@@ -4,16 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIENVENIDO MI PA</title>
+    <link rel="stylesheet" href="../static/css/home.css"> 
 </head>
 <body>
     <header>
         <h1>BIENVENIDO, PRODUCTOS DISPONIBLES: </h1>
     </header>
-    <body>
-        <div id="home_products">
+    <div id="home_products">
+        
+    </div>
+    <button id="btn_user_to_seller">CONVERTIRME EN VENDEDOR</button>
+
+    <div id="form_modal">
+        <div id="form_content">
+            <h2>Convertirse en Vendedor</h2>
+            <label for="seller_name">Nombre:</label>
+            <input type="text" id="seller_name" placeholder="Tu nombre">
             
+            <label for="seller_email">Correo:</label>
+            <input type="email" id="seller_email" placeholder="Tu correo">
+            
+            <label for="seller_phone">Teléfono:</label>
+            <input type="text" id="seller_phone" placeholder="Tu teléfono">
+            
+            <label for="seller_password">Contraseña:</label>
+            <input type="password" id="seller_password" placeholder="Tu contraseña">
+            
+            <button id="btn_submit_seller">Enviar</button>
+            <button id="btn_close_modal">Cerrar</button>
         </div>
-        <button id="btn_user_to_seller">CONVERTIRME EN VENDEDOR</button>
-    </body>
+    </div>
+
+    <script src="../static/js/home.js"></script>
 </body>
 </html>
