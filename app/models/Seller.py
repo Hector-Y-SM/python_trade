@@ -1,14 +1,14 @@
 from app.models.Interfaces import Add, Delete, Archive
 
 class Seller(Add, Delete, Archive):
-    def __init__(self, seller_name, seller_email, seller_phone, seller_password):
+    def __init__(self, seller_name, seller_email, seller_phone, seller_password, all_products=None, archive=None, available=None):
         self.seller_name = seller_name
         self.seller_email = seller_email
         self.seller_phone = seller_phone
         self.seller_password = seller_password
-        self.available = []
-        self.archive = []
-        self.all_products = []
+        self.all_products = all_products or []
+        self.archive = archive or []
+        self.available = available or []
         self._role = 'seller'
 
     def __str__(self):

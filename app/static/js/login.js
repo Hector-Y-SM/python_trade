@@ -1,9 +1,7 @@
-let aux_email = ''
 const btn_user = document.getElementById('btn_generate_user_login');
 const btn_seller = document.getElementById('btn_generate_seller_login');
 
 const login = async (email, password, type) => {
-    sessionStorage.setItem('user_email', email);
     //TODO implemantar el parametro type, para definir si se trata de un usuario o vendedor, ya q este la bd
     const response = await fetch('/login_usr',{
         method: 'POST',
@@ -18,9 +16,8 @@ const login = async (email, password, type) => {
 
     const result = await response.json();
     if(response.ok){
+        sessionStorage.setItem('user_email', email);
         console.log(result.user.name);
-        aux_email = email;
-        console.log(aux_email)
         window.location.href = type == 0 ? 'home.html' : 'home_seller.html';
     } else { console.error(result.message) }
 }

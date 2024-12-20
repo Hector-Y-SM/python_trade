@@ -11,6 +11,13 @@ class User(Buy, Add, Delete):
         self.cart = []
         self._role = 'user'
     
+    def __str__(self):
+        return f"""
+                name: {self.name}
+                email: {self.email}
+                number: {self.number}
+                password: {self.password}    
+                """
 
     def buy_product(self):
         print('ACABAS DE COMPRAR:')

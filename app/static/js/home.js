@@ -45,6 +45,7 @@ btn_user_to_seller.addEventListener('click', async () => {
                 .then(response => response.json())  
                 .then(data => {
                     console.log(data.message);  
+                    sessionStorage.setItem('seller_email', inp_email.value);
                     window.location.href = 'home_seller.html';
                 })
                 .catch(error => {

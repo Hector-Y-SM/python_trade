@@ -12,7 +12,8 @@ register.addEventListener('click', () => {
         password: password,
         cell_phone: cell_phone
     }
-    fetch('/crear_usuario', {
+
+    fetch('/create_user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -22,7 +23,7 @@ register.addEventListener('click', () => {
     .then(response => response.json())  
     .then(data => {
         console.log(data.message);  
-        register.href = "login.html";
+        window.location.href = "login.html";
     })
     .catch(error => {
         console.error('Error:', error);

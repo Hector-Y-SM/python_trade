@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOLA, QUE VAS A PUBLICAR HOY?</title>
+    <link rel="stylesheet" href="../static/css/home_seller.css">
+    <title></title>
 </head>
 <body>
-    
+    <header>
+        <h1>HOLA, QUE VAS A PUBLICAR HOY?</h1>
+    </header>
+    <body>
+        <button id="btn_add_product">AGREGAR PRODUCTO</button>
+        <div id="form_modal_product" class="hidden">
+            <div id="form_content_product">
+                <h2>Describe tu producto</h2>
+                <label for="product_name">Nombre:</label>
+                <input type="text" id="product_name" placeholder="Nombre del producto">
+                
+                <label for="product_description">Descripcion:</label>
+                <input type="text" id="product_description" placeholder="Describe tu producto">
+                
+                <label for="product_price">Precio:</label>
+                <input type="number" id="product_price" placeholder="Precio del producto">
+                
+                <label for="product_stock">Inventario:</label>
+                <input type="number" id="product_stock" placeholder="Cantidad de unidades disponibles">
+                
+                <button id="btn_submit_product">Publicar</button>
+                <button id="btn_close_modal">Cerrar</button>
+            </div>
+        </div>
+        
+
+        <h1>TUS PRODUCTOS</h1>
+        <div id="seller_products">
+
+        </div>
+    </body>
+    <script src="../static/js/home_seller.js"></script>
 </body>
 </html>

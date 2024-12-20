@@ -19,4 +19,9 @@ def create_app():
     def home():
         return render_template('home.html')
     
+
+    @app.route('/home_seller.html')
+    def home_seller():
+        return render_template('home_seller.html')
+    
     return app
