@@ -17,8 +17,22 @@ class Seller(Add, Delete, Archive):
                 email: {self.seller_email}
                 phone: {self.seller_phone}
                 password: {self.seller_password}
+                all_products: {[product.to_dict() for product in self.all_products]}  
+                archive: {[product.to_dict() for product in self.archive]}  
+                available: {[product.to_dict() for product in self.available]}
                 """
-
+    # metodo para serializar las instacias en las propiedades para guardar productos
+    def to_dict(self):
+        return {
+            "name": self.seller_name,
+            "email": self.seller_email,
+            "phone_number": self.seller_phone,
+            "password": self.seller_password,
+            "all_products": [product.to_dict() for product in self.all_products],  # Serializar productos
+            "archive": [product.to_dict() for product in self.archive],  # Serializar productos archivados
+            "available": [product.to_dict() for product in self.available],  # Serializar productos disponibles
+            "role": self._role
+        }
 
     def add_product(self, product):
         product.product_status = 'active'

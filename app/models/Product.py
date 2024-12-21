@@ -22,6 +22,17 @@ class Product:
                 status: {self._product_status}
                 """
     
+    def to_dict(self):
+        return {
+                "ID": {self.product_id},
+                "seller": {self.seller},
+                "name": {self._product_name},
+                "description": {self._product_description},
+                "price": {self._product_price},
+                "stock": {self._product_stock},
+                "status": {self._product_status}
+        }
+
     @property
     def product_name(self):
         return self._product_name  

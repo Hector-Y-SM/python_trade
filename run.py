@@ -124,6 +124,7 @@ def user_to_seller():
 @app.route('/create_product', methods=['POST'])
 def create_product():
     data = request.get_json()
+    print('esto llega ', data)
 
     seller_data = data.get('seller')
     seller_email = seller_data['email']  
@@ -148,16 +149,10 @@ def create_product():
     if not seller_object:
         return jsonify({"message":"el vendedor no existe"}), 404
     
-    prd = Product(
-        seller=seller_object, 
-        product_name=product_name, 
-        product_description=product_description, 
-        product_price=product_price, 
-        product_stock=product_stock
-    )
-
+    prd = Product(seller_object, product_name, product_description, product_price, product_stock)
     seller_object.add_product(prd)
     productos.append(prd)
+
     return jsonify({"message":"Producto publicado exitosamente"}), 201
 
 
@@ -174,7 +169,7 @@ def get_seller_products():
     if not seller_products:
         return jsonify({"message": "No se encontraron productos para este vendedor"}), 404
 
-    print('aquiii ', seller)
+
     response = {
         "seller_name": seller.seller_name,
         "seller_email": seller.seller_email,
@@ -188,7 +183,6 @@ def get_seller_products():
             for prd in seller_products
         ]
     }
-
 
     return jsonify(response), 200
 

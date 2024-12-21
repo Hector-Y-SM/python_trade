@@ -6,7 +6,6 @@ form_modal.style.display = 'none';
 const btn_close_modal = document.getElementById('btn_close_modal');
 
 btn_user_to_seller.addEventListener('click', async () => {
-    try{
         const user_email = sessionStorage.getItem('user_email');
         const inp_name = document.getElementById('seller_name');
         const inp_email = document.getElementById('seller_email');
@@ -27,7 +26,7 @@ btn_user_to_seller.addEventListener('click', async () => {
             inp_email.value = user_data.email;
             inp_number.value = user_data.number;
 
-            btn_submit_seller.addEventListener('click', () =>{
+            btn_submit_seller.addEventListener('click', () => {
                 const data = {
                     name: inp_name.value,
                     email: inp_email.value,
@@ -58,8 +57,6 @@ btn_user_to_seller.addEventListener('click', async () => {
             console.log('error ',error.message)
         }
 
-    } catch(error){ console.log('error '. error) }
-    
     form_modal.style.display = 'flex'; 
 });
 
