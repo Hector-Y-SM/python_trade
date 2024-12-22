@@ -1,13 +1,16 @@
 from app import create_app
-from flask import render_template, request, jsonify
+from flask import request, jsonify
 from app.models.User import User
 from app.models.Seller import Seller
 from app.models.Product import Product
+from app.extensions import db
+from sqlalchemy.exc import IntegrityError
 
 app = create_app()
 usuarios = []
 vendedores = []
 productos = []
+
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
@@ -21,9 +24,27 @@ def create_user():
     if not all([name, email, cell_phone, password]):
         return jsonify({"message": "Todos los campos son obligatorios"}), 400
     
-    usr = User(name, email, password, cell_phone)
-    usuarios.append(usr)
-    return jsonify({"message":"usuario creado exitosamente"}), 201
+    if not isinstance(email, str) or '@' not in email:
+        return jsonify({"message": "Correo electrónico no válido"}), 400
+    
+    usr = User(name=name, email=email, password=password, cell_phone=cell_phone)
+    try:
+        db.session.add(usr)
+        db.session.commit()
+
+        user_in_db = User.query.filter_by(email=email).first()
+        if user_in_db:
+            print(f"Usuario añadido correctamente: {user_in_db}")
+
+        return jsonify({"message":"usuario creado exitosamente"}), 201
+    
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"message":"el correo ya fue registrado anteriormente"}), 409
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message":f"error al crear el usuario: {str(e)}"}), 500
 
 
 @app.route('/login_usr', methods=['POST'])
