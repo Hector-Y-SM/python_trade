@@ -7,15 +7,6 @@ register.addEventListener('click', (e) => {
     const email = document.getElementById('input_email').value.trim();
     const password = document.getElementById('input_password').value.trim();
 
-    if (!name || !cell_phone || !email || !password) {
-        alert("todos los campos son obligatorios.");
-        return;
-    }
-    if (!email.includes('@')) {
-        alert("ingresa un correo electrónico válido.");
-        return;
-    }
-
     const userData = {
         name: name,
         email: email,
@@ -30,13 +21,15 @@ register.addEventListener('click', (e) => {
         },
         body: JSON.stringify(userData),
     })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message); 
-        window.location.href = "login.html";         
-    })
+    .then(response => response.json().then(data => {
+        if (response.status === 201) {
+            alert(data.message); 
+            window.location.href = "login.html";  
+            return;
+        }      
+        alert(data.message);  
+    }))
     .catch(error => {
         alert(error.message); 
-        console.error('Error:', error);
     });
 });

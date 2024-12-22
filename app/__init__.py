@@ -8,6 +8,6 @@ def create_app():
 
     with app.app_context():
         db.drop_all()
-        db.create_all()  # Crea las tablas si no existen
+        db.create_all() 
         
     return app

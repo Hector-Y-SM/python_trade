@@ -9,7 +9,7 @@ class Seller(db.Model):
     seller_email = db.Column(db.String(120), unique=True, nullable=False)
     seller_phone = db.Column(db.String(15), nullable=False)
     seller_password = db.Column(db.String(200), nullable=False)
-    _role = db.Column(db.String(20), default='seller')
+    role = db.Column(db.String(20), default='seller')
 
     # relación con productos
     all_products = db.relationship('Product', back_populates='seller')
@@ -25,7 +25,7 @@ class Seller(db.Model):
             "phone_number": self.seller_phone,
             "password": self.seller_password,
             "all_products": [product.to_dict() for product in self.all_products],
-            "role": self._role
+            "role": self.role
         }
 
     def add_product(self, product):

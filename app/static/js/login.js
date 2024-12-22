@@ -16,10 +16,14 @@ const login = async (email, password, type) => {
 
     const result = await response.json();
     if(response.ok){
-        sessionStorage.setItem('user_email', email);
-        console.log(result.user.name);
-        window.location.href = type == 0 ? 'home.html' : 'home_seller.html';
-    } else { console.error(result.message) }
+        if(response.status == 200){
+            alert(result.message);
+            sessionStorage.setItem('user_email', email);
+            window.location.href = type == 0 ? 'home.html' : 'home_seller.html';
+            return;
+        }
+        alert(result.message);
+    } else { alert(result.message) }
 }
 
 function generate_login(id, type){
@@ -41,7 +45,7 @@ function generate_login(id, type){
     btn_submit.textContent = 'Login';
 
     btn_submit.addEventListener('click', () => {
-        login(input1.value, input2.value, type);
+        login(input1.value.trim(), input2.value.trim(), type);
     });
 
     div.append(label1, input1, label2, input2, btn_submit);

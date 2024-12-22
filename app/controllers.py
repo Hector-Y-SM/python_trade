@@ -13,10 +13,10 @@ usuarios = []
 vendedores = []
 productos = []
 
+# use in register.js
 @app.route('/create_user', methods=['POST'])
 def create_user():
     data = request.get_json()
-
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
@@ -45,11 +45,10 @@ def create_user():
         db.session.rollback()
         return jsonify({"message":f"error al crear el usuario: {str(e)}"}), 500
 
-
+#use in login.js
 @app.route('/login_usr', methods=['POST'])
 def login_usr():
     data = request.get_json()
-
     email = data.get('email')
     password = data.get('password')
 
@@ -59,39 +58,31 @@ def login_usr():
     if not isinstance(email, str) or '@' not in email:
         return jsonify({"message": "Correo electrónico no válido"}), 400
     
- 
     user_in_db = User.query.filter_by(email=email).first()
     if user_in_db and check_password_hash(user_in_db.password, password):
         return jsonify({
             "message": "login exitoso",
             "user": {
-                "email": email,
+                "email": user_in_db.email,
                 "name": user_in_db.name,  
                 "role": user_in_db.role  
             }
         }), 200
     else:
-        return jsonify({"message":"email o contraseña incorrecta"})
+        return jsonify({"message":"email o contraseña incorrecta"}), 401
 
-
+#use in home.js
 @app.route('/get_user_data', methods=['POST'])
 def get_user_data():
     data = request.get_json()
     email = data.get('user_email')
-    flag = False
-    user = {}
-
-    for x in usuarios:
-        if x.email == email:
-            user = x
-            flag = True
-
-    if flag:
+    user_in_db = User.query.filter_by(email=email).first()
+    
+    if user_in_db:
         return jsonify({
-            "name": user.name,
-            "email": user.email,
-            "number": user.number
-            #"password": user.password
+            "name": user_in_db.name,
+            "email": user_in_db.email,
+            "cell_phone": user_in_db.cell_phone
         }), 200
     else:
         return jsonify({"message":"usuario no encontrado"}), 401
@@ -120,26 +111,38 @@ def get_seller_data():
         "role": seller._role
     }), 200;
 
-
+#use in home.js 
 @app.route('/user_to_seller', methods=['POST'])
 def user_to_seller():
     data = request.get_json()
-
+    name = data.get('name')
     email = data.get('email')
-    user = next((x for x in usuarios if x.email == email), None)
-    name = data.get('name', user.name)
-    cell_phone = data.get('cell_phone', user.number)
-    password = data.get('password', user.password)
+    password = data.get('password')
+    hashed_password = generate_password_hash(password)
+    cell_phone = data.get('cell_phone')    
 
-    if not all([name, email, cell_phone, password]):
+    if not all([name, email, password, cell_phone]):
         return jsonify({"message": "Todos los campos son obligatorios"}), 400
     
-    if user.email == email:
-        usuarios.remove(user)
-
-    seller = Seller(name, email, cell_phone, password)
-    vendedores.append(seller)
-    return jsonify({"message":"te has convertido en vendedor exitosamente"}), 201
+    user_in_db = User.query.filter_by(email=email).first()
+    if user_in_db == None:
+        return jsonify({"message":"el usuario no existe"}), 404
+    
+    try:
+        db.session.delete(user_in_db)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message":f"error al eliminar el usuario: {str(e)}"}), 500
+    
+    try:
+        seller = Seller(seller_name=name, seller_email=email, seller_phone=cell_phone, seller_password=hashed_password)
+        db.session.add(seller)
+        db.session.commit()
+        return jsonify({"message":"te has convertido en vendedor"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message":f"error al convertirte en vendedor {str(e)}"}), 500
 
 
 @app.route('/create_product', methods=['POST'])

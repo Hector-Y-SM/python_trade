@@ -3,19 +3,19 @@ from app.extensions import db
 class CartItem(db.Model):
     __tablename__ = 'cart_items'
 
-    # La columna product_id debe ser una clave foránea que hace referencia a Product
+    # product_id es una clave foránea que hace referencia a Product
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), primary_key=True)
     quantity = db.Column(db.Integer, default=0)
     product_stock = db.Column(db.Integer, default=0)
     product_status = db.Column(db.String(8))
 
-    # Relación con Product usando backref para simplificar
+    # relacion con product
     product = db.relationship('Product', back_populates='cart_items')
     
-    # Clave foránea para la relación con User
+    # clave foránea para la relación con user
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
-    # Relación con User usando back_populates
+    # relación con User 
     user = db.relationship('User', back_populates='cart_items')
 
     def __repr__(self):
