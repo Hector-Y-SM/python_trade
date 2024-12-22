@@ -9,7 +9,7 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     cell_phone = db.Column(db.String(15), nullable=False)
     pay = db.Column(db.Float, default = 0)
-    _role = db.Column(db.String(20), default = 'user')
+    role = db.Column(db.String(20), default = 'user')
 
     #relacionar con la tabla del carrito
     cart_items = db.relationship('CartItem', back_populates='user', lazy='joined')
