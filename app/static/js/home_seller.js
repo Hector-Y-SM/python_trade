@@ -22,12 +22,18 @@ async function update_products() {
 
         if (!response_products.ok) {
             alert(response_products.message);
+            return;
         }
 
         const data = await response_products.json();
         const products = data.products;
 
         div_product.innerHTML = '';  
+        if (products.length === 0) {
+            div_product.innerHTML = '<p>No hay productos publicados por este vendedor.</p>';
+            return;
+        }
+
         const productCards = products.map(prd => {
             const product_card = document.createElement('div');
             product_card.id = 'product-card';
@@ -43,7 +49,7 @@ async function update_products() {
 
         div_product.append(...productCards);
 }
-
+update_products();
 
 async function create(seller_data, product_name, product_description, product_price, product_stock) {
     const product_data = {
@@ -98,6 +104,7 @@ async function load_seller_data() {
     }
 }
 
+
 btn_add_product.addEventListener('click', async (e) => {
     e.preventDefault()
     form_modal.style.display = 'flex';
@@ -122,4 +129,4 @@ btn_add_product.addEventListener('click', async (e) => {
 
 
 btn_close_modal.addEventListener('click', () => { form_modal.style.display = 'none'; });
-btn_close_seller_sesion.addEventListener('click', () => window.location.href = '/')
+btn_close_seller_sesion.addEventListener('click', () => window.location.href = '/');

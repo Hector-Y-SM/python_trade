@@ -40,12 +40,35 @@ def create_user():
         db.session.rollback()
         return jsonify({"message":f"error al crear el usuario: {str(e)}"}), 500
 
+
+def login_user(email, password):
+    user_in_db = User.query.filter_by(email=email).first()
+    if user_in_db and check_password_hash(user_in_db.password, password):
+        return {
+            "email": user_in_db.email,
+            "name": user_in_db.name,
+            "role": user_in_db.role
+        }
+    return None
+
+def login_seller(email, password):
+    seller_in_db = Seller.query.filter_by(seller_email=email).first()
+    if seller_in_db and check_password_hash(seller_in_db.seller_password, password):
+        return {
+            "email": seller_in_db.seller_email,
+            "name": seller_in_db.seller_name,
+            "role": seller_in_db.role
+        }
+    return None
+
 #use in login.js
-@app.route('/login_usr', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login_usr():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
+    type = data.get('type')
+    print(type)
 
     if not all([email, password]):
         return jsonify({"message": "Todos los campos son obligatorios"}), 400
@@ -53,19 +76,18 @@ def login_usr():
     if not isinstance(email, str) or '@' not in email:
         return jsonify({"message": "Correo electrónico no válido"}), 400
     
-    user_in_db = User.query.filter_by(email=email).first()
-    if user_in_db and check_password_hash(user_in_db.password, password):
-        return jsonify({
-            "message": "login exitoso",
-            "user": {
-                "email": user_in_db.email,
-                "name": user_in_db.name,  
-                "role": user_in_db.role  
-            }
-        }), 200
+    if type == 0:
+        user_data = login_user(email,password)
+    elif type == 1:
+        user_data = login_seller(email, password)
     else:
-        return jsonify({"message":"email o contraseña incorrecta"}), 401
+        return jsonify({"message": "Tipo de usuario inválido"}), 400
 
+    if user_data:
+        return jsonify({"message":"login exitoso", "user":user_data}), 200
+    else:
+        return jsonify({"message":"email o contraseña incorrectos"}), 401
+    
 #use in home.js
 @app.route('/get_user_data', methods=['POST'])
 def get_user_data():
@@ -191,9 +213,6 @@ def get_seller_products():
         return jsonify({"message": "vendedor no registrado en bd"}), 400
 
     products_in_db = Product.query.filter_by(seller_id=seller_in_db.id).all()
-    if not products_in_db:
-        return jsonify({"message": "No se encontraron productos para este vendedor"}), 404
-
 
     response = {
         "seller_name": seller_in_db.seller_name,
@@ -206,7 +225,10 @@ def get_seller_products():
                 "product_stock": product.product_stock
             }
             for product in products_in_db
-        ]
+        ] if products_in_db else []
     }
+
+    if not products_in_db:
+        response["message"] = "no se encontraron productos para este vendedor"
 
     return jsonify(response), 200

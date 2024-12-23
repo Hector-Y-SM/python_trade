@@ -2,15 +2,16 @@ const btn_user = document.getElementById('btn_generate_user_login');
 const btn_seller = document.getElementById('btn_generate_seller_login');
 
 const login = async (email, password, type) => {
-    //TODO implemantar el parametro type, para definir si se trata de un usuario o vendedor, ya q este la bd
-    const response = await fetch('/login_usr',{
+    console.log('tipo: ', type)
+    const response = await fetch('/login',{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             email: email,
-            password: password
+            password: password,
+            type: type
         }),
     })
 
@@ -27,6 +28,7 @@ const login = async (email, password, type) => {
 }
 
 function generate_login(id, type){
+    console.log('pistaa',type)
     type == 0 ? 
         document.getElementById('login_seller').innerHTML = '' 
         : document.getElementById('login_usr').innerHTML = '' 
@@ -52,4 +54,4 @@ function generate_login(id, type){
 }
 
 btn_user.addEventListener('click', () => generate_login('login_usr', 0));
-btn_seller.addEventListener('click', () => generate_login('login_seller'), 1);
+btn_seller.addEventListener('click', () => generate_login('login_seller', 1));
