@@ -22,17 +22,16 @@ btn_user_to_seller.addEventListener('click', async () => {
 
         if (response.ok){
             const user_data = await response.json();
-            console.log(user_data)
-            inp_name.value = user_data.name;
-            inp_email.value = user_data.email;
-            inp_number.value = user_data.cell_phone;
+            inp_name.value = user_data.name.toString();
+            inp_email.value = user_data.email.toString();
+            inp_number.value = user_data.cell_phone.toString();
 
             btn_submit_seller.addEventListener('click', () => {
                 const data = {
-                    name: inp_name.value.toString(),
-                    email: inp_email.value.toString(),
+                    name: inp_name.value,
+                    email: inp_email.value,
                     password: inp_password.value.toString(),
-                    cell_phone: inp_number.value.toString()
+                    cell_phone: inp_number.value
                 }
 
                 console.log(data)

@@ -6,12 +6,7 @@ from app.models.Product import Product
 from app.extensions import db
 from sqlalchemy.exc import IntegrityError
 from app import create_app
-
 app = create_app()
-
-usuarios = []
-vendedores = []
-productos = []
 
 # use in register.js
 @app.route('/create_user', methods=['POST'])
@@ -87,28 +82,25 @@ def get_user_data():
     else:
         return jsonify({"message":"usuario no encontrado"}), 401
 
-
+#use in home_seller.js
 @app.route('/get_seller_data', methods=['POST'])
 def get_seller_data():
     data = request.get_json()
-
     email = data.get('seller_email')
     if not email:
         return jsonify({"message": "El campo 'seller_email' es obligatorio"}), 400
 
-    seller = next((x for x in vendedores if x.seller_email == email), None)
-    if not seller:
+    seller_in_db = Seller.query.filter_by(seller_email=email).first()
+    if not seller_in_db:
         return jsonify({"message":"el vendedor no existe"}), 404
     
     return jsonify({
-        "name": seller.seller_name,
-        "email": seller.seller_email,
-        "phone_number": seller.seller_phone,
-        "password": seller.seller_password,
-        "available": seller.available,
-        "archive": seller.archive,
-        "all_products": seller.all_products,
-        "role": seller._role
+        "name": seller_in_db.seller_name,
+        "email": seller_in_db.seller_email,
+        "phone_number": seller_in_db.seller_phone,
+        "password": seller_in_db.seller_password,
+        "role": seller_in_db.role,
+        "all_products": seller_in_db.all_products
     }), 200;
 
 #use in home.js 
@@ -125,7 +117,7 @@ def user_to_seller():
         return jsonify({"message": "Todos los campos son obligatorios"}), 400
     
     user_in_db = User.query.filter_by(email=email).first()
-    if user_in_db == None:
+    if not user_in_db:
         return jsonify({"message":"el usuario no existe"}), 404
     
     try:
@@ -144,7 +136,7 @@ def user_to_seller():
         db.session.rollback()
         return jsonify({"message":f"error al convertirte en vendedor {str(e)}"}), 500
 
-
+#use in home_seller.js
 @app.route('/create_product', methods=['POST'])
 def create_product():
     data = request.get_json()
@@ -169,42 +161,51 @@ def create_product():
     except ValueError:
         return jsonify({"message":"el precio y la cantidad disponible de unidades debe ser mayor a 0"}), 404
 
-    seller_object = next((x for x in vendedores if x.seller_email == seller_email), None)
-    if not seller_object:
-        return jsonify({"message":"el vendedor no existe"}), 404
+    seller_in_db = Seller.query.filter_by(seller_email=seller_email).first()
+    if not seller_in_db:
+        return jsonify({"message":"el usuario no existe"}), 404
     
-    prd = Product(seller_object, product_name, product_description, product_price, product_stock)
-    seller_object.add_product(prd)
-    productos.append(prd)
+    try:
+        prd = Product(
+            product_name=product_name,
+            product_description=product_description,
+            product_price=product_price,
+            product_stock=product_stock,
+            seller_id=seller_in_db.id
+        )
+        db.session.add(prd)
+        db.session.commit()
+        return jsonify({"message":"Producto publicado exitosamente"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error al publicar el producto: {str(e)}"}), 500
 
-    return jsonify({"message":"Producto publicado exitosamente"}), 201
-
-
+#use in home_seller.js
 @app.route('/get_seller_products', methods=['POST'])
 def get_seller_products():
     data = request.get_json()
 
     email = data.get('seller_email')
-    if not email:
-        return jsonify({"message": "El campo 'seller_email' es obligatorio"}), 400
+    seller_in_db = Seller.query.filter_by(seller_email=email).first()
+    if not seller_in_db:
+        return jsonify({"message": "vendedor no registrado en bd"}), 400
 
-    seller = next((v for v in vendedores if v.seller_email == email), None)
-    seller_products = [prd for prd in productos if prd.seller.seller_email == email]
-    if not seller_products:
+    products_in_db = Product.query.filter_by(seller_id=seller_in_db.id).all()
+    if not products_in_db:
         return jsonify({"message": "No se encontraron productos para este vendedor"}), 404
 
 
     response = {
-        "seller_name": seller.seller_name,
-        "seller_email": seller.seller_email,
-        "products": [
+        "seller_name": seller_in_db.seller_name,
+        "seller_email": seller_in_db.seller_email,
+        "products":[
             {
-                "product_name": prd.product_name,
-                "product_description": prd.product_description,
-                "product_price": prd.product_price,
-                "product_stock": prd.product_stock
+                "product_name": product.product_name,
+                "product_description": product.product_description,
+                "product_price": product.product_price,
+                "product_stock": product.product_stock
             }
-            for prd in seller_products
+            for product in products_in_db
         ]
     }
 
