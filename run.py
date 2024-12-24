@@ -1,4 +1,4 @@
-from app.controllers import app
+from app.controllers_routes import app
 
 if __name__ == '__main__':
     app.run(debug=True)

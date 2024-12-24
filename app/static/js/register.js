@@ -1,6 +1,6 @@
 const register = document.getElementById('btn_register');
 
-register.addEventListener('click', (e) => {
+register.addEventListener('click', async (e) => {
     e.preventDefault();
     const name = document.getElementById('input_name').value.trim();
     const cell_phone = document.getElementById('input_cellphone').value.trim();

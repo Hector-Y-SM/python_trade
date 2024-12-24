@@ -11,6 +11,7 @@ const seller_email = sessionStorage.getItem('seller_email'); // obtener email de
 let cached_seller_data = null; 
 let submitProductListenerAdded = false; // controlar eventos
 
+// TODO: arreglar el error que se tiene cuando se cierra sesion, se vuelve a iniciar y se intenta agregar un producto
 async function update_products() {
         const response_products = await fetch('get_seller_products', {
             method: 'POST',
@@ -85,6 +86,8 @@ async function create(seller_data, product_name, product_description, product_pr
 
 async function load_seller_data() {
     if (!cached_seller_data || cached_seller_data.email !== seller_email) {
+        console.log(cached_seller_data)
+        console.log(seller_email)
         console.log('cargando datos del vendedor desde el servidor...');
         const response = await fetch('/get_seller_data', {
             method: 'POST',
@@ -95,6 +98,7 @@ async function load_seller_data() {
         });
         if (response.ok) {
             cached_seller_data = await response.json(); 
+            console.log(cached_seller_data)
             console.log('datos del vendedor cargados:', cached_seller_data);
         } else {
             alert('error al obtener los datos del vendedor');
@@ -113,8 +117,8 @@ btn_add_product.addEventListener('click', async (e) => {
     const product_price = document.getElementById('product_price');
     const product_stock = document.getElementById('product_stock');
 
-    await load_seller_data();
 
+    await load_seller_data();
     if (cached_seller_data) {
         if (!submitProductListenerAdded) {  
             btn_submit_product.addEventListener('click', () => {
