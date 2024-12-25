@@ -96,6 +96,8 @@ async function load_seller_data() {
             },
             body: JSON.stringify({ seller_email })
         });
+
+        console.log(response)
         if (response.ok) {
             cached_seller_data = await response.json(); 
             console.log(cached_seller_data)
@@ -133,4 +135,8 @@ btn_add_product.addEventListener('click', async (e) => {
 
 
 btn_close_modal.addEventListener('click', () => { form_modal.style.display = 'none'; });
-btn_close_seller_sesion.addEventListener('click', () => window.location.href = '/');
+btn_close_seller_sesion.addEventListener('click', () => {
+    cached_seller_data = null;
+    sessionStorage.clear()    
+    window.location.href = '/'
+});

@@ -6,7 +6,6 @@ from app.extensions import db
 #use in home_seller.js
 def create_product():
     data = request.get_json()
-    print('esto llega ', data)
 
     seller_data = data.get('seller')
     seller_email = seller_data['email']  

@@ -23,11 +23,11 @@ class Product(db.Model):
 
     def to_dict(self):
         return {
-            "ID": self.product_id,
+            "ID": self.id,
             "seller": self.seller,
-            "name": self._product_name,
-            "description": self._product_description,
-            "price": self._product_price,
-            "stock": self._product_stock,
-            "status": self._product_status
+            "name": self.product_name,
+            "description": self.product_description,
+            "price": self.product_price,
+            "stock": self.product_stock,
+            "status": self.product_status
         }

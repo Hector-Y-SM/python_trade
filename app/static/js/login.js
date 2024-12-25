@@ -19,7 +19,7 @@ const login = async (email, password, type) => {
     if(response.ok){
         if(response.status == 200){
             alert(result.message);
-            sessionStorage.setItem('user_email', email);
+            type == 0 ? sessionStorage.setItem('user_email', email) : sessionStorage.setItem('seller_email', email);
             window.location.href = type == 0 ? 'home.html' : 'home_seller.html';
             return;
         }
