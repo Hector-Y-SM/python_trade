@@ -21,13 +21,3 @@ class Product(db.Model):
     def __repr__(self):
         return f"<Product {self.product_id}: {self._product_name}, Price: {self._product_price}, Stock: {self._product_stock}>"
 
-    def to_dict(self):
-        return {
-            "ID": self.id,
-            "seller": self.seller,
-            "name": self.product_name,
-            "description": self.product_description,
-            "price": self.product_price,
-            "stock": self.product_stock,
-            "status": self.product_status
-        }

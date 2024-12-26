@@ -11,46 +11,84 @@ const seller_email = sessionStorage.getItem('seller_email'); // obtener email de
 let cached_seller_data = null; 
 let submitProductListenerAdded = false; // controlar eventos
 
-// TODO: arreglar el error que se tiene cuando se cierra sesion, se vuelve a iniciar y se intenta agregar un producto
 async function update_products() {
-        const response_products = await fetch('get_seller_products', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ seller_email })
-        });
+    const response_products = await fetch('/get_seller_products', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ seller_email })
+    });
 
-        if (!response_products.ok) {
-            alert(response_products.message);
-            return;
-        }
+    if (!response_products.ok) {
+        alert(response_products.message);
+        return;
+    }
 
-        const data = await response_products.json();
-        const products = data.products;
+    const data = await response_products.json();
+    const products = data.products;
 
-        div_product.innerHTML = '';  
-        if (products.length === 0) {
-            div_product.innerHTML = '<p>No hay productos publicados por este vendedor.</p>';
-            return;
-        }
+    div_product.innerHTML = '';  
+    if (products.length === 0) {
+        div_product.innerHTML = '<p>No hay productos publicados por este vendedor.</p>';
+        return;
+    }
 
-        const productCards = products.map(prd => {
-            const product_card = document.createElement('div');
-            product_card.id = 'product-card';
-            product_card.innerHTML = `
-                <h2>Vendido por: ${data.seller_name}</h2>
-                <h3>Nombre: ${prd.product_name}</h3>
-                <p>Descripción: ${prd.product_description}</p>
-                <p>Precio: $${prd.product_price}</p>
-                <p>Stock: ${prd.product_stock}</p>
-            `;
-            return product_card;
-        });
-
-        div_product.append(...productCards);
+    products.forEach(prd => {
+        const product_card = document.createElement('div');
+        product_card.className = 'product-card';
+        product_card.dataset.productId = prd.product_id;
+        product_card.innerHTML = `
+            <h2>Vendido por: ${data.seller_name}</h2>
+            <h3>Nombre: ${prd.product_name}</h3>
+            <p>Descripción: ${prd.product_description}</p>
+            <p>Precio: $${prd.product_price}</p>
+            <p>Stock: ${prd.product_stock}</p>
+            <button id="btn_delete_product" data-id="${prd.id}">Eliminar</button>
+            <button id="btn_update_product" data-id=${prd.id}>Editar</button>
+        `;
+        div_product.appendChild(product_card);
+    });
 }
-update_products();
+await update_products();
+
+div_product.addEventListener('click', async (e)=>{
+    const clicked_element = e.target;
+
+    if(clicked_element.id === 'btn_delete_product'){
+        const product_id = clicked_element.dataset.id;
+        if(product_id){
+            const confirmed = confirm('estas seguro de elimnar este producto?')
+            if(confirmed){
+                await delete_product(product_id);
+                await update_products()
+            }
+        }else{
+            console.log('no exits')
+        }
+    }
+})
+
+
+async function delete_product(product_id) {
+    const response = await fetch('/delete_product',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({product_id: product_id})
+    });    
+
+    console.log(response)
+    const data = await response.json();
+    if(response.ok){
+        alert(data.message);
+        await update_products()
+    } else {
+        alert('error al eliminar el producto', data.message)
+    }
+}
+
 
 async function create(seller_data, product_name, product_description, product_price, product_stock) {
     const product_data = {
@@ -86,8 +124,6 @@ async function create(seller_data, product_name, product_description, product_pr
 
 async function load_seller_data() {
     if (!cached_seller_data || cached_seller_data.email !== seller_email) {
-        console.log(cached_seller_data)
-        console.log(seller_email)
         console.log('cargando datos del vendedor desde el servidor...');
         const response = await fetch('/get_seller_data', {
             method: 'POST',
@@ -97,7 +133,6 @@ async function load_seller_data() {
             body: JSON.stringify({ seller_email })
         });
 
-        console.log(response)
         if (response.ok) {
             cached_seller_data = await response.json(); 
             console.log(cached_seller_data)
@@ -130,6 +165,7 @@ btn_add_product.addEventListener('click', async (e) => {
         }
     } else {
         alert('no se pudieron cargar los datos del vendedor');
+        return;
     }
 });
 

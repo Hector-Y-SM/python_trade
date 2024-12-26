@@ -17,6 +17,7 @@ def get_seller_products():
         "seller_email": seller_in_db.seller_email,
         "products":[
             {
+                "id": product.id,
                 "product_name": product.product_name,
                 "product_description": product.product_description,
                 "product_price": product.product_price,

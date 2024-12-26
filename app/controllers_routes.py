@@ -6,6 +6,7 @@ from app.controllers.sellers.get_seller_data import get_seller_data
 from app.controllers.sellers.get_seller_products import get_seller_products
 from app.controllers.users.get_user_data import get_user_data
 from app.controllers.users.user_to_seller import user_to_seller
+from app.controllers.sellers.delete_product import delete_product
 
 app = create_app()
 
@@ -37,3 +38,7 @@ def route_get_user_data():
 @app.route('/user_to_seller', methods=['POST'])
 def route_user_to_seller():
     return user_to_seller()
+
+@app.route('/delete_product', methods=['POST'])
+def route_delete_product():
+    return delete_product()
