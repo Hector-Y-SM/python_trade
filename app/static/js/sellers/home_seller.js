@@ -5,11 +5,17 @@ const btn_close_seller_sesion = document.getElementById('btn_close_seller_sesion
 
 const form_modal = document.getElementById('form_modal_product');
 form_modal.style.display = 'none';
+const product_name = document.getElementById('product_name');
+const product_description = document.getElementById('product_description');
+const product_price = document.getElementById('product_price');
+const product_stock = document.getElementById('product_stock');
+
 const div_product = document.getElementById('seller_products');
 const seller_email = sessionStorage.getItem('seller_email'); // obtener email del vendedor usando lo q se almaceno en la sesion
 
 let cached_seller_data = null; 
 let submitProductListenerAdded = false; // controlar eventos
+let aux_update = false;
 
 async function update_products() {
     const response_products = await fetch('/get_seller_products', {
@@ -45,7 +51,7 @@ async function update_products() {
             <p>Precio: $${prd.product_price}</p>
             <p>Stock: ${prd.product_stock}</p>
             <button id="btn_delete_product" data-id="${prd.id}">Eliminar</button>
-            <button id="btn_update_product" data-id=${prd.id}>Editar</button>
+            <button id="btn_upgrade_product" data-id=${prd.id}>Editar</button>
         `;
         div_product.appendChild(product_card);
     });
@@ -61,14 +67,64 @@ div_product.addEventListener('click', async (e)=>{
             const confirmed = confirm('estas seguro de elimnar este producto?')
             if(confirmed){
                 await delete_product(product_id);
-                await update_products()
             }
         }else{
             console.log('no exits')
         }
+    } else if(clicked_element.id === 'btn_upgrade_product'){
+        const product_id = clicked_element.dataset.id;
+        if(product_id){
+            form_modal.style.display = 'flex';
+            console.log(aux_update)
+            aux_update = true;
+            console.log(aux_update)
+            btn_submit_product.onclick = async () => {
+                const name = product_name.value;
+                const description = product_description.value;
+                const price = product_price.value;
+                const stock = product_stock.value;
+
+                if (name && description && price && stock) {
+                    await upgrade_product(product_id, name, description, price, stock);
+
+                    product_name.value = '';
+                    product_description.value = '';
+                    product_price.value = '';
+                    product_stock.value = '';
+                    form_modal.style.display = 'none';
+                } else {
+                    alert('Por favor completa todos los campos antes de actualizar.');
+                }
+            };
+        }
     }
 })
 
+async function upgrade_product(product_id, name, description, price, stock){
+    const product_data = {
+        id: product_id,
+        product_name: name,
+        product_description: description,
+        product_price: price,
+        product_stock: stock
+    }
+
+    const response = await fetch('/upgrade_product',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(product_data)
+    });    
+
+    const data = await response.json()
+    if(response.ok) {
+        alert(data.message);
+        update_products();
+    } else {
+        alert('error al actualizar este producto ', data.message)
+    }
+}
 
 async function delete_product(product_id) {
     const response = await fetch('/delete_product',{
@@ -78,8 +134,7 @@ async function delete_product(product_id) {
         },
         body: JSON.stringify({product_id: product_id})
     });    
-
-    console.log(response)
+ 
     const data = await response.json();
     if(response.ok){
         alert(data.message);
@@ -149,18 +204,16 @@ async function load_seller_data() {
 btn_add_product.addEventListener('click', async (e) => {
     e.preventDefault()
     form_modal.style.display = 'flex';
-    const product_name = document.getElementById('product_name');
-    const product_description = document.getElementById('product_description');
-    const product_price = document.getElementById('product_price');
-    const product_stock = document.getElementById('product_stock');
-
 
     await load_seller_data();
     if (cached_seller_data) {
         if (!submitProductListenerAdded) {  
-            btn_submit_product.addEventListener('click', () => {
-                create(cached_seller_data, product_name, product_description, product_price, product_stock);
-            });
+            console.log('estadooo ', aux_update)
+                btn_submit_product.addEventListener('click', () => {
+                    if(aux_update == false){
+                    create(cached_seller_data, product_name, product_description, product_price, product_stock);
+                    }
+                });
             submitProductListenerAdded = true;  
         }
     } else {

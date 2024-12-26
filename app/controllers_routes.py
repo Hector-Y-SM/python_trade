@@ -7,6 +7,7 @@ from app.controllers.sellers.get_seller_products import get_seller_products
 from app.controllers.users.get_user_data import get_user_data
 from app.controllers.users.user_to_seller import user_to_seller
 from app.controllers.sellers.delete_product import delete_product
+from app.controllers.sellers.upgrade_product import upgrade_product
 
 app = create_app()
 
@@ -42,3 +43,7 @@ def route_user_to_seller():
 @app.route('/delete_product', methods=['POST'])
 def route_delete_product():
     return delete_product()
+
+@app.route('/upgrade_product', methods=['POST'])
+def route_upgrade_product():
+    return upgrade_product()

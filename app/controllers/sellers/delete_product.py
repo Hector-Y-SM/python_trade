@@ -1,5 +1,4 @@
 from app.models.Product import Product
-from app.models.Seller import Seller
 from flask import request, jsonify
 from app.extensions import db
 
@@ -15,7 +14,7 @@ def delete_product():
     try:
         db.session.delete(product_in_db)
         db.session.commit()
-        return jsonify({"message":"producto eliminado correctamente"})
+        return jsonify({"message":"producto eliminado correctamente"}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message":f"error al eliminar el producto {str(e)}"})
+        return jsonify({"message":f"error al eliminar el producto {str(e)}"}), 404
