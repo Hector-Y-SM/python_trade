@@ -1,9 +1,15 @@
 const btn_user_to_seller = document.getElementById('btn_user_to_seller');
 const btn_submit_seller = document.getElementById('btn_submit_seller');
+const btn_close_sesion = document.getElementById('btn_close_sesion');
 
 const form_modal = document.getElementById('form_modal');
 form_modal.style.display = 'none';
 const btn_close_modal = document.getElementById('btn_close_modal');
+
+const div_products = document.getElementById('home_products');
+
+document.addEventListener('DOMContentLoaded', async () => {
+await get_products();
 
 btn_user_to_seller.addEventListener('click', async () => {
         const user_email = sessionStorage.getItem('user_email');
@@ -34,7 +40,6 @@ btn_user_to_seller.addEventListener('click', async () => {
                     cell_phone: inp_number.value
                 }
 
-                console.log(data)
                 fetch('/user_to_seller', {
                     method: 'POST',
                     headers: {
@@ -58,10 +63,40 @@ btn_user_to_seller.addEventListener('click', async () => {
             })
         } else {
             const error = await response.json();
-            alert('error ', error.message)
+            alert('error ', error.message);
         }
 
     form_modal.style.display = 'flex'; 
 });
 
 btn_close_modal.addEventListener('click', () => { form_modal.style.display = 'none'; });
+btn_close_sesion.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = '/'
+})
+async function get_products(){
+    form_modal.style.display = 'none';
+    const response = await fetch('/get_all_products',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    const data = await response.json();
+    if(response.ok){
+        data.forEach(prd => {
+            const product_card = document.createElement('div');
+            product_card.innerHTML = `
+            <h2>Vendido por: ${prd.seller.name}</h2>
+            <h3>Nombre: ${prd.product_name}</h3>
+            <p>Descripción: ${prd.product_description}</p>
+            <p>Precio: $${prd.product_price}</p>
+            <p>Stock: ${prd.product_stock}</p>
+            <button>AGREGAR AL CARRITO</button>
+        `;
+            div_products.appendChild(product_card);
+        });
+    }
+}
+})

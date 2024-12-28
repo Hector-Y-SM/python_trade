@@ -69,15 +69,14 @@ div_product.addEventListener('click', async (e)=>{
                 await delete_product(product_id);
             }
         }else{
-            console.log('no exits')
+            console.log('no exits');
         }
     } else if(clicked_element.id === 'btn_upgrade_product'){
         const product_id = clicked_element.dataset.id;
         if(product_id){
             form_modal.style.display = 'flex';
-            console.log(aux_update)
             aux_update = true;
-            console.log(aux_update)
+            btn_submit_product.textContent = 'update';
             btn_submit_product.onclick = async () => {
                 const name = product_name.value;
                 const description = product_description.value;
@@ -92,8 +91,9 @@ div_product.addEventListener('click', async (e)=>{
                     product_price.value = '';
                     product_stock.value = '';
                     form_modal.style.display = 'none';
+                    btn_submit_product.textContent = 'publicar';
                 } else {
-                    alert('Por favor completa todos los campos antes de actualizar.');
+                    alert('completa todos los campos antes de actualizar.');
                 }
             };
         }
@@ -117,12 +117,12 @@ async function upgrade_product(product_id, name, description, price, stock){
         body: JSON.stringify(product_data)
     });    
 
-    const data = await response.json()
+    const data = await response.json();
     if(response.ok) {
         alert(data.message);
         update_products();
     } else {
-        alert('error al actualizar este producto ', data.message)
+        alert('error al actualizar este producto ', data.message);
     }
 }
 
@@ -138,9 +138,9 @@ async function delete_product(product_id) {
     const data = await response.json();
     if(response.ok){
         alert(data.message);
-        await update_products()
+        await update_products();
     } else {
-        alert('error al eliminar el producto', data.message)
+        alert('error al eliminar el producto', data.message);
     }
 }
 
@@ -208,17 +208,15 @@ btn_add_product.addEventListener('click', async (e) => {
     await load_seller_data();
     if (cached_seller_data) {
         if (!submitProductListenerAdded) {  
-            console.log('estadooo ', aux_update)
                 btn_submit_product.addEventListener('click', () => {
                     if(aux_update == false){
-                    create(cached_seller_data, product_name, product_description, product_price, product_stock);
+                        create(cached_seller_data, product_name, product_description, product_price, product_stock);
                     }
                 });
             submitProductListenerAdded = true;  
         }
     } else {
         alert('no se pudieron cargar los datos del vendedor');
-        return;
     }
 });
 

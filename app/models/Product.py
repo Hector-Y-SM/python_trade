@@ -18,6 +18,18 @@ class Product(db.Model):
     # relación con CartItem
     cart_items = db.relationship('CartItem', back_populates='product')
 
-    def __repr__(self):
-        return f"<Product {self.product_id}: {self._product_name}, Price: {self._product_price}, Stock: {self._product_stock}>"
-
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_name": self.product_name,
+            "product_description": self.product_description,
+            "product_price": self.product_price,
+            "product_stock": self.product_stock,
+            "product_status": self.product_status,
+            "seller": {
+                "id": self.seller.id,
+                "name": self.seller.seller_name,
+                "email": self.seller.seller_email,
+                "phone": self.seller.seller_phone,
+            } if self.seller else None
+        }
