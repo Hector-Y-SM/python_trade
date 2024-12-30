@@ -10,7 +10,8 @@ const div_products = document.getElementById('home_products');
 const div_cart = document.getElementById('cart_items');
 
 document.addEventListener('DOMContentLoaded', async () => {
-await get_products();
+    await get_products();
+});
 
 btn_user_to_seller.addEventListener('click', async () => {
     form_modal.style.display = 'flex'; 
@@ -61,8 +62,7 @@ btn_user_to_seller.addEventListener('click', async () => {
                 .catch(error => {
                     console.error('Error:', error);
                 });
-
-            })
+            });
         } else {
             const error = await response.json();
             alert('error ', error.message);
@@ -74,9 +74,8 @@ btn_user_to_seller.addEventListener('click', async () => {
 btn_close_modal.addEventListener('click', () => { form_modal.style.display = 'none'; });
 btn_close_sesion.addEventListener('click', () => {
     sessionStorage.clear();
-    window.location.href = '/'
-})
-
+    window.location.href = '/';
+});
 
 div_products.addEventListener('click', async (e) => {
     const clicked_element = e.target;
@@ -85,39 +84,87 @@ div_products.addEventListener('click', async (e) => {
     if(clicked_element.id === 'btn_add_product'){
         const product_id = clicked_element.dataset.id;
         if(product_id){
-            await add_product(product_id);
+            await add_product(product_id, sessionStorage.getItem('user_email'));
         }
     }
 })
 
-async function add_product(id) {
-    const response = await fetch('/add_product_cart',{
+async function add_product(product_id, user) {
+    const response = await fetch('/get_product', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({product_id: id}), 
+        body: JSON.stringify({ product_id: product_id }),
     });
 
-    const data = [await response.json()]; 
-    console.log(data)
-    if(response.ok){
+    const data = [await response.json()];
+    console.log(data);
+
+    if (response.ok) {
         data.forEach(prd => {
             const product_card = document.createElement('div');
             product_card.className = 'product-card';
             product_card.dataset.productId = prd.product_id;
             product_card.innerHTML = `
-            <h2>Vendido por: ${prd.seller.name}</h2>
-            <h3>${prd.product_name}</h3>
-            <p>Precio: $${prd.product_price}</p>
-            <p>Stock: ${prd.product_stock}</p>
-            <button>COMPRAR</button>
-        `;
-        div_cart.appendChild(product_card);
+                <h2>Vendido por: ${prd.seller.name}</h2>
+                <h3>${prd.product_name}</h3>
+                <p>Precio: $${prd.product_price}</p>
+                <button id="btn_show_form" data-id=${prd.id}>COMPRAR</button>
+                <div id="form_container_${prd.id}" class="hidden">
+                    <label>Cantidad:</label>
+                    <div>
+                        <button id="btn_decrease_${prd.id}">-</button>
+                        <span id="quantity_${prd.id}">1</span>
+                        <button id="btn_increase_${prd.id}">+</button>
+                    </div>
+                    <button id="btn_confirm_${prd.id}" data-id=${prd.id}>Confirmar</button>
+                </div>
+            `;
+            div_cart.appendChild(product_card);
+
+            document.getElementById(`btn_show_form`).addEventListener('click', () => {
+                document.getElementById(`form_container_${prd.id}`).classList.toggle('hidden');
+            });
+
+            let quantity = 1;
+            document.getElementById(`btn_decrease_${prd.id}`).addEventListener('click', () => {
+                if (quantity > 1) {
+                    quantity--;
+                    document.getElementById(`quantity_${prd.id}`).textContent = quantity;
+                }
+            });
+
+            document.getElementById(`btn_increase_${prd.id}`).addEventListener('click', () => {
+                quantity++;
+                document.getElementById(`quantity_${prd.id}`).textContent = quantity;
+            });
+
+            document.getElementById(`btn_confirm_${prd.id}`).addEventListener('click', async () => {
+                const confirm_response = await fetch('/add_product_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        product_id: prd.id, 
+                        user_email: user, 
+                        quantity: quantity 
+                    }),
+                });
+
+                if (confirm_response.ok) {
+                    alert('Producto agregado al carrito exitosamente.');
+                    document.getElementById(`form_container_${prd.id}`).classList.add('hidden');
+                } else {
+                    const error_data = await confirm_response.json();
+                    alert(`Error: ${error_data.message}`);
+                }
+            });
         });
     }
-    }
-})
+}
+
 
 async function get_products(){
     form_modal.style.display = 'none';

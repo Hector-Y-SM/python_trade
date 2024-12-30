@@ -17,6 +17,3 @@ class CartItem(db.Model):
     
     # relación con User 
     user = db.relationship('User', back_populates='cart_items')
-
-    def __repr__(self):
-        return f'<Product: {self.product.product_name} x{self.quantity}: ${self.product.product_price * self.quantity}>'

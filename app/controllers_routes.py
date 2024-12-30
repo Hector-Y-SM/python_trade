@@ -10,6 +10,8 @@ from app.controllers.sellers.delete_product import delete_product
 from app.controllers.sellers.upgrade_product import upgrade_product
 from app.controllers.users.get_all_products import get_all_products
 from app.controllers.users.add_product_cart import add_product_cart
+from app.controllers.users.get_product import get_product
+
 
 app = create_app()
 
@@ -57,3 +59,7 @@ def route_get_all_products():
 @app.route('/add_product_cart', methods=['POST'])
 def route_add_product_cart():
     return add_product_cart()
+
+@app.route('/get_product', methods=['POST'])
+def route_get_product():
+    return get_product()

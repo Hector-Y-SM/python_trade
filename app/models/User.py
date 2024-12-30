@@ -36,7 +36,7 @@ class User(db.Model):
 
     
     def add_product(self, product, quantity): 
-        if product.product_stock > 0 and quantity <= product.product_stock and product.product_status == 'active':
+        if product.product_stock > 0 and quantity <= product.product_stock and product.product_status != 'archive':
             for prd in self.cart_items:
                 if prd.product == product:
                     prd.quantity += quantity

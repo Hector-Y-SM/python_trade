@@ -32,3 +32,37 @@
     padding: 10px 20px;
     cursor: pointer;
 }
+
+
+.hidden {
+    display: none;
+}
+
+.product-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+#form_container {
+    margin-top: 10px;
+}
+
+#form_container div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
