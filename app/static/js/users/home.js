@@ -7,11 +7,13 @@ form_modal.style.display = 'none';
 const btn_close_modal = document.getElementById('btn_close_modal');
 
 const div_products = document.getElementById('home_products');
+const div_cart = document.getElementById('cart_items');
 
 document.addEventListener('DOMContentLoaded', async () => {
 await get_products();
 
 btn_user_to_seller.addEventListener('click', async () => {
+    form_modal.style.display = 'flex'; 
         const user_email = sessionStorage.getItem('user_email');
 
         const inp_name = document.getElementById('seller_name');
@@ -74,6 +76,49 @@ btn_close_sesion.addEventListener('click', () => {
     sessionStorage.clear();
     window.location.href = '/'
 })
+
+
+div_products.addEventListener('click', async (e) => {
+    const clicked_element = e.target;
+
+
+    if(clicked_element.id === 'btn_add_product'){
+        const product_id = clicked_element.dataset.id;
+        if(product_id){
+            await add_product(product_id);
+        }
+    }
+})
+
+async function add_product(id) {
+    const response = await fetch('/add_product_cart',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({product_id: id}), 
+    });
+
+    const data = [await response.json()]; 
+    console.log(data)
+    if(response.ok){
+        data.forEach(prd => {
+            const product_card = document.createElement('div');
+            product_card.className = 'product-card';
+            product_card.dataset.productId = prd.product_id;
+            product_card.innerHTML = `
+            <h2>Vendido por: ${prd.seller.name}</h2>
+            <h3>${prd.product_name}</h3>
+            <p>Precio: $${prd.product_price}</p>
+            <p>Stock: ${prd.product_stock}</p>
+            <button>COMPRAR</button>
+        `;
+        div_cart.appendChild(product_card);
+        });
+    }
+    }
+})
+
 async function get_products(){
     form_modal.style.display = 'none';
     const response = await fetch('/get_all_products',{
@@ -84,19 +129,21 @@ async function get_products(){
     });
 
     const data = await response.json();
-    if(response.ok){
-        data.forEach(prd => {
+    if(response.ok){   
+        const aux = data.length == undefined? [] : data;
+        aux.forEach(prd => {
             const product_card = document.createElement('div');
+            product_card.className = 'product-card';
+            product_card.dataset.productId = prd.product_id;
             product_card.innerHTML = `
             <h2>Vendido por: ${prd.seller.name}</h2>
             <h3>Nombre: ${prd.product_name}</h3>
             <p>Descripción: ${prd.product_description}</p>
             <p>Precio: $${prd.product_price}</p>
             <p>Stock: ${prd.product_stock}</p>
-            <button>AGREGAR AL CARRITO</button>
+            <button id="btn_add_product" data-id=${prd.id}>AGREGAR AL CARRITO</button>
         `;
-            div_products.appendChild(product_card);
+        div_products.appendChild(product_card);
         });
     }
 }
-})
