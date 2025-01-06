@@ -1,4 +1,5 @@
 from app.models.CartItem import CartItem
+from app.models.Product import Product
 from app.extensions import db
 class User(db.Model):
     __tablename__ = 'users'
@@ -56,11 +57,13 @@ class User(db.Model):
     def delete_product(self, product_id):
         for prd in self.cart_items:
             if prd.product_id == product_id:
-                db.session.delete(prd)
-                db.session.commit()
-                self.pay -= prd.product.product_price * prd.quantity
-                print(f'eliminaste: {prd.product.product_name} del carrito.')
-                break
+                product = Product.query.get(prd.product_id) 
+                if product:
+                    self.pay -= product.product_price * prd.quantity
+                    db.session.delete(prd)
+                    db.session.commit()
+                    print(f'eliminaste: {product.product_name} del carrito.')
+                    break
         else:
-            print(f'producto con ID {product_id} \nno encontrado en el carrito.')
+            print(f'producto con ID {product_id} no encontrado en el carrito.')
         return self.cart_items

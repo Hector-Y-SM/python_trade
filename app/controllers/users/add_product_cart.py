@@ -20,7 +20,6 @@ def add_product_cart():
     if not user_in_db:
         return jsonify({"message": "Usuario no encontrado"}), 404
 
-
     try:
         data_in_db = product_in_db.to_dict()
         user_in_db.add_product(product_in_db, quantity)

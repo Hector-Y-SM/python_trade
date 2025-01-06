@@ -11,7 +11,8 @@ from app.controllers.sellers.upgrade_product import upgrade_product
 from app.controllers.users.get_all_products import get_all_products
 from app.controllers.users.add_product_cart import add_product_cart
 from app.controllers.users.get_product import get_product
-
+from app.controllers.users.delete_product_cart import delete_product_cart
+from app.controllers.users.get_products_in_cart import get_products_in_cart
 
 app = create_app()
 
@@ -63,3 +64,11 @@ def route_add_product_cart():
 @app.route('/get_product', methods=['POST'])
 def route_get_product():
     return get_product()
+
+@app.route('/delete_product_cart', methods=['DELETE'])
+def route_delete_product_cart():
+    return delete_product_cart()
+
+@app.route('/get_products_in_cart', methods=['POST'])
+def route_get_products_in_cart():
+    return get_products_in_cart()
