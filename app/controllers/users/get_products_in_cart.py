@@ -15,8 +15,10 @@ def get_products_in_cart():
             "product_name": product.product.product_name,
             "product_description": product.product.product_description,
             "product_price": product.product.product_price,
-            "product_stock": product.product.product_stock
+            "product_stock": product.product.product_stock,
+            "quantity": product.quantity
         }
+
         for product in user_in_db.cart_items
     ]
 

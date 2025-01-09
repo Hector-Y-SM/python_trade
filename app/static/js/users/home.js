@@ -30,7 +30,7 @@ btn_user_to_seller.addEventListener('click', async () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user_email }),
+        body: JSON.stringify({ user_email: user_email }),
     });
 
     if (response.ok) {
@@ -93,13 +93,22 @@ div_products.addEventListener('click', async (e) => {
 });
 
 async function add_product(product_id, user_email) {
-    console.log(product_id)
+    const quantity = prompt('Ingresa la cantidad deseada a comprar: ');
+    if((isNaN(Number(quantity))) || (quantity < 0)){
+        alert('la cantidad debe ser un numero y mayor que cero.');
+        return;
+    }
+    
     const response = await fetch('/add_product_cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ product_id, user_email }),
+        body: JSON.stringify({ 
+            product_id: product_id, 
+            user_email: user_email,
+            quantity: quantity,
+        }),
     });
 
     if (response.ok) {
@@ -137,7 +146,7 @@ async function get_cart_products(user_email) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user_email })
+        body: JSON.stringify({ user_email: user_email })
     });
 
     if (response.ok) {
@@ -159,7 +168,6 @@ async function update_cart(user_email) {
     }
 
     const aux =  cart_products.cart_items.length === 0 ? [] : cart_products.cart_items;
-    console.log(aux)
     aux.forEach(product => {
         const product_card = document.createElement('div');
         product_card.className = 'cart-item';

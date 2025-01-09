@@ -35,12 +35,12 @@ class User(db.Model):
         print(f'PAGASTE: {self.pay}')
         self.pay = 0
 
-    
+    #TODO LA CANTIDAD APARECE UNDEFINED
     def add_product(self, product, quantity): 
-        if product.product_stock > 0 and quantity <= product.product_stock and product.product_status != 'archive':
+        if product.product_stock > 0 and int(quantity) < product.product_stock and product.product_status != 'archive':
             for prd in self.cart_items:
                 if prd.product == product:
-                    prd.quantity += quantity
+                    prd.quantity += int(quantity)
                     print(f'aumentaste la cantidad de {prd.product_name} a {prd.quantity}')
                     break
             else:
@@ -49,7 +49,7 @@ class User(db.Model):
                 db.session.commit()
                 print(f'agregaste: {product.product_name} x{quantity}')
 
-            self.pay += product.product_price * quantity
+            self.pay += product.product_price * int(quantity)
         else:
             print(f'{product.product_name} está fuera de stock o no hay suficiente inventario.')
 
