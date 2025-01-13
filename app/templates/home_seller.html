@@ -8,10 +8,16 @@
 </head>
 <body>
     <header>
-        <h1>HOLA, QUE VAS A PUBLICAR HOY?</h1>
+        <div id="header_container">
+            <h1>HOLA, ¿QUÉ VAS A PUBLICAR HOY?</h1>
+            <div id="header_buttons">
+                <button id="btn_add_product">AGREGAR PRODUCTO</button>
+                <button id="btn_close_seller_sesion">CERRAR SESIÓN</button>
+            </div>
+        </div>
     </header>
+    
     <body>
-        <button id="btn_add_product">AGREGAR PRODUCTO</button>
         <div id="form_modal_product" class="hidden">
             <div id="form_content_product">
                 <h2>Describe tu producto</h2>
@@ -37,7 +43,6 @@
         <div id="seller_products">
 
         </div>
-        <button id="btn_close_seller_sesion">CERRAR SESION</button>
     </body>
     <script src="../static/js/sellers/home_seller.js" type="module"></script>
 </body>

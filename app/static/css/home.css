@@ -1,3 +1,126 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+#header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    color: #000;
+}
+
+#header-container h1 {
+    font-size: 1.5rem;
+}
+
+#header-btn-container{
+    display: flex;
+    flex-direction: column;
+}
+
+#btn_user_to_seller, #btn_close_sesion  {
+    background-color: white;
+    color: #007bff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#btn_user_to_seller:hover, #btn_close_sesion:hover{
+    background-color: #0056b3;
+    color: white;
+}
+
+
+#home_container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+#home_products {
+    flex: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.product-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    width: calc(33.333% - 10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+.product-card h2,
+.product-card h3,
+.product-card p {
+    margin: 5px 0;
+}
+
+.product-card button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.product-card button:hover {
+    background-color: #218838;
+}
+
+
+#cart_items {
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#cart_items h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.cart-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.cart-item button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-item button:hover {
+    background-color: #c82333;
+}
+
+
+
 #form_modal {
     display: none; 
     position: fixed;
@@ -5,64 +128,64 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-    z-index: 1000;
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
     justify-content: center;
     align-items: center;
 }
 
 #form_content {
     background-color: white;
-    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 300px;
 }
 
-#form_content input {
-    margin: 10px 0;
-    width: 90%;
-    padding: 10px;
+
+#form_content h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
 }
+
+
+#form_content input[type="text"],
+#form_content input[type="email"],
+#form_content input[type="password"] {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #333;
+    outline: none;
+    font-size: 1em;
+    padding: 8px 5px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+#form_content input[type="text"]:focus,
+#form_content input[type="email"]:focus,
+#form_content input[type="password"]:focus {
+    border-bottom-color: #007bff;
+}
+
 
 #form_content button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-
-.hidden {
-    display: none;
-}
-
-.product-card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-}
-
-#form_container {
-    margin-top: 10px;
-}
-
-#form_container div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-button {
-    padding: 5px 10px;
+    display: inline-block;
+    background-color: white;
+    color: #007bff;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 1em;
     cursor: pointer;
+    margin: 10px 5px;
+    transition: transform 0.2s, background 0.3s;
 }
 
-button:disabled {
-    cursor: not-allowed;
+#form_content button:hover {
+    background-color: #0056b3;
+    color: white;
 }

@@ -170,6 +170,7 @@ async function update_cart(user_email) {
     const aux =  cart_products.cart_items.length === 0 ? [] : cart_products.cart_items;
     aux.forEach(product => {
         const product_card = document.createElement('div');
+        const txt = document.createElement('h2');
         product_card.className = 'cart-item';
         product_card.dataset.productId = product.product_id;
         product_card.innerHTML = `
@@ -202,6 +203,7 @@ async function get_products() {
         const aux = data.length === undefined ? [] : data;
         aux.forEach(prd => {
             const product_card = document.createElement('div');
+
             product_card.className = 'product-card';
             product_card.dataset.productId = prd.product_id;
             product_card.innerHTML = `
