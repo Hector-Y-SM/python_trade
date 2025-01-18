@@ -13,6 +13,7 @@ from app.controllers.users.add_product_cart import add_product_cart
 from app.controllers.users.get_product import get_product
 from app.controllers.users.delete_product_cart import delete_product_cart
 from app.controllers.users.get_products_in_cart import get_products_in_cart
+from app.controllers.users.buy_all_products import buy_all_products
 
 app = create_app()
 
@@ -72,3 +73,7 @@ def route_delete_product_cart():
 @app.route('/get_products_in_cart', methods=['POST'])
 def route_get_products_in_cart():
     return get_products_in_cart()
+
+@app.route('/buy_all_products', methods=['POST'])
+def route_buy_all_products():
+    return buy_all_products()

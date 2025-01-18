@@ -18,26 +18,37 @@ class User(db.Model):
     def __repr__(self):
         return f'<User: {self.name}, Email: {self.email}>'
 
-    def buy_product(self):
-        print('ACABAS DE COMPRAR:')
+    def buy_all_products(self):
+        purchased_items = []
+        failed_items = []
+
         for prd in self.cart_items:
             product = prd.product
-            if product.product_stock > 0 and prd.quantity <= product.product_stock and product.product_status == 'active':
-                product.product_stock -= prd.quantity
-                db.session.delete(prd)  # Elimina el ítem del carrito
-                print(f'{product.product_name}: {product.product_price}, stock: {product.product_stock}, cantidad: {prd.quantity}')
-            else:
-                self.pay -= prd.product.product_price * prd.quantity
-                print('out of stock')
+            if product.product_stock <= 0:
+                failed_items.append({'product_id': product.id, 'reason': 'Sin stock disponible'})
+                continue
+            if prd.quantity > product.product_stock:
+                failed_items.append({'product_id': product.id, 'reason': 'Cantidad excede el stock disponible'})
                 continue
 
-        db.session.commit()
-        print(f'PAGASTE: {self.pay}')
-        self.pay = 0
+       
+            product.product_stock -= prd.quantity
+            purchased_items.append({'product_id': product.id, 'quantity': prd.quantity, 'price': product.product_price})
+            db.session.delete(prd)  
+
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise Exception(f"Error al procesar la compra: {str(e)}")
+
+        return {'purchased': purchased_items, 'failed': failed_items}
+
 
     #TODO LA CANTIDAD APARECE UNDEFINED
     def add_product(self, product, quantity): 
-        if product.product_stock > 0 and int(quantity) < product.product_stock and product.product_status != 'archive':
+        if product.product_stock > 0 and int(quantity) <= product.product_stock and product.product_status != 'archive':
             for prd in self.cart_items:
                 if prd.product == product:
                     prd.quantity += int(quantity)

@@ -158,35 +158,87 @@ async function get_cart_products(user_email) {
     }
 }
 
+function update_quantity(product_id, delta) {
+    const quantityElement = document.getElementById(`quantity_${product_id}`);
+    let currentQuantity = parseInt(quantityElement.textContent);
+
+    if (currentQuantity + delta > 0) {
+        quantityElement.textContent = currentQuantity + delta;
+        console.log(`Cantidad actualizada: ${currentQuantity + delta}`);
+    } else {
+        alert("La cantidad no puede ser menor a 1.");
+    }
+}
+
+
+async function buy_all_products(user_email) {
+    div_products.innerHTML = '';
+    div_cart.innerHTML = '';
+    const response = await fetch('/buy_all_products',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_email: user_email })
+    });
+
+    const data = await response.json()
+    if(response.ok){
+        alert(data.message);
+        console.log(data.summary)
+        get_products();
+    }else{
+        alert(`Error: ${data.message}`);
+    }
+}
+
 async function update_cart(user_email) {
     const cart_products = await get_cart_products(user_email);
     div_cart.innerHTML = ''; 
 
     if (cart_products.length === 0) {
-        div_cart.innerHTML = '<p>No hay ningun producto en el carrito</p>';
+        div_cart.innerHTML = '<p>No hay ningún producto en el carrito</p>';
         return;
     }
 
-    const aux =  cart_products.cart_items.length === 0 ? [] : cart_products.cart_items;
+    const aux = cart_products.cart_items.length === 0 ? [] : cart_products.cart_items;
+
     aux.forEach(product => {
         const product_card = document.createElement('div');
-        const txt = document.createElement('h2');
         product_card.className = 'cart-item';
         product_card.dataset.productId = product.product_id;
+
         product_card.innerHTML = `
             <h3>${product.product_name}</h3>
             <p>Precio: $${product.product_price}</p>
-            <p>Cantidad: ${product.quantity}</p>
-            <button id="btn_remove_from_cart_${product.product_id}" data-id=${product.product_id}>ELIMINAR</button>
+            <p>Cantidad: <span id="quantity_${product.product_id}">${product.quantity}</span></p>
+            <button id="btn_increase_${product.product_id}" data-id="${product.product_id}">+</button>
+            <button id="btn_decrease_${product.product_id}" data-id="${product.product_id}">-</button>
+            <button id="btn_buy_${product.product_id}" data-id="${product.product_id}">COMPRAR</button>
+            <button id="btn_remove_${product.product_id}" data-id="${product.product_id}">ELIMINAR</button>
         `;
 
         div_cart.appendChild(product_card);
 
-        document.getElementById(`btn_remove_from_cart_${product.product_id}`).addEventListener('click', async (e) => {
+
+        document.getElementById(`btn_increase_${product.product_id}`).addEventListener('click', () => {
+            update_quantity(product.product_id, 1);
+        });
+
+        document.getElementById(`btn_decrease_${product.product_id}`).addEventListener('click', () => {
+            update_quantity(product.product_id, -1);
+        });
+
+        document.getElementById(`btn_buy_${product.product_id}`).addEventListener('click', async () => {
+            await buy_all_products(user_email);
+        });
+
+        document.getElementById(`btn_remove_${product.product_id}`).addEventListener('click', async () => {
             await remove_product(product.product_id, user_email);
         });
     });
 }
+
 
 // get all the products published by the sellers
 async function get_products() {

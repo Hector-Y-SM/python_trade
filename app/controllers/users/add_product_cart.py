@@ -19,6 +19,9 @@ def add_product_cart():
 
     if not user_in_db:
         return jsonify({"message": "Usuario no encontrado"}), 404
+    
+    if int(quantity) > int(product_in_db.product_stock):
+        return  jsonify({"message": "No hay suficiente stock disponible"}), 404
 
     try:
         data_in_db = product_in_db.to_dict()
