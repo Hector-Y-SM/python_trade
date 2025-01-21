@@ -14,6 +14,7 @@ from app.controllers.users.get_product import get_product
 from app.controllers.users.delete_product_cart import delete_product_cart
 from app.controllers.users.get_products_in_cart import get_products_in_cart
 from app.controllers.users.buy_all_products import buy_all_products
+from app.controllers.users.update_product_quantity import update_product_quantity
 
 app = create_app()
 
@@ -77,3 +78,7 @@ def route_get_products_in_cart():
 @app.route('/buy_all_products', methods=['POST'])
 def route_buy_all_products():
     return buy_all_products()
+
+@app.route('/update_product_quantity', methods=['PUT'])
+def route_update_product_quantity():
+    return update_product_quantity()

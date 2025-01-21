@@ -87,13 +87,12 @@ div_products.addEventListener('click', async (e) => {
     if (clicked_element.id === 'btn_add_product') {
         const product_id = clicked_element.dataset.id;
         if (product_id) {
-            await add_product(product_id, sessionStorage.getItem('user_email'));
+            await add_product(product_id, sessionStorage.getItem('user_email'), 1);
         }
     }
 });
 
-async function add_product(product_id, user_email) {
-    const quantity = prompt('Ingresa la cantidad deseada a comprar: ');
+async function add_product(product_id, user_email, quantity) {
     if((isNaN(Number(quantity))) || (quantity < 0)){
         alert('la cantidad debe ser un numero y mayor que cero.');
         return;
@@ -163,10 +162,42 @@ function update_quantity(product_id, delta) {
     let currentQuantity = parseInt(quantityElement.textContent);
 
     if (currentQuantity + delta > 0) {
-        quantityElement.textContent = currentQuantity + delta;
-        console.log(`Cantidad actualizada: ${currentQuantity + delta}`);
+        const newQuantity = currentQuantity + delta;
+        quantityElement.textContent = newQuantity;
+
+        update_quantity_in_backend(product_id, newQuantity);
+
+        console.log(`Cantidad actualizada: ${newQuantity}`);
+        return newQuantity;
     } else {
         alert("La cantidad no puede ser menor a 1.");
+    }
+}
+
+async function update_quantity_in_backend(product_id, quantity) {
+    const user_email = sessionStorage.getItem('user_email');
+    if (!user_email) {
+        alert('Usuario no autenticado.');
+        return;
+    }
+
+    const response = await fetch('/update_product_quantity', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            product_id: product_id,
+            user_email: user_email,
+            quantity: quantity
+        })
+    });
+
+    if (response.ok) {
+        console.log('Cantidad actualizada en el backend.');
+    } else {
+        const error_data = await response.json();
+        alert(`Error al actualizar la cantidad: ${error_data.message}`);
     }
 }
 
@@ -229,6 +260,7 @@ async function update_cart(user_email) {
             update_quantity(product.product_id, -1);
         });
 
+        
         document.getElementById(`btn_buy_${product.product_id}`).addEventListener('click', async () => {
             await buy_all_products(user_email);
         });
